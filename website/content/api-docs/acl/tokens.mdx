@@ -34,7 +34,12 @@ The table below shows this endpoint's support for
 
 The corresponding CLI command is [`consul acl token create`](/commands/acl/token/create).
 
-### Parameters
+### Query Parameters
+
+- `ns` `(string: "")` <EnterpriseAlert inline /> - Specifies the namespace to create the token within.
+  The namespace can also be specified [through other methods](#methods-to-specify-namespace).
+
+### JSON Request Body Schema
 
 - `AccessorID` `(string: "")` - Specifies a UUID to use as the token's Accessor ID.
   If not specified a UUID will be generated for this field. Added in v1.5.0.
@@ -102,10 +107,8 @@ The corresponding CLI command is [`consul acl token create`](/commands/acl/token
   24 hours. Added in Consul 1.5.0.
 
 - `Namespace` `(string: "")` <EnterpriseAlert inline /> - Specifies the namespace to
-  create the token. If not provided in the JSON body, the value of
-  the `ns` URL query parameter or in the `X-Consul-Namespace` header will be used.
-  If not provided, the namespace will be inherited from the request's ACL
-  token or will default to the `default` namespace. Added in Consul 1.7.0.
+  create the token within. This takes precedence over the `ns` query parameter,
+  one of several [other methods to specify the namespace](#methods-to-specify-namespace).
 
 ### Sample Payload
 
@@ -177,16 +180,13 @@ The table below shows this endpoint's support for
 
 The corresponding CLI command is [`consul acl token read`](/commands/acl/token/read).
 
-### Parameters
+### Query Parameters
 
 - `AccessorID` `(string: <required>)` - Specifies the accessor ID of the ACL token to
   read. This is required and is specified as part of the URL path.
 
-- `ns` `(string: "")` <EnterpriseAlert inline /> - Specifies the namespace to lookup
-  the token. This value can be specified as the `ns` URL query
-  parameter or the `X-Consul-Namespace` header. If not provided by either,
-  the namespace will be inherited from the request's ACL token or will default
-  to the `default` namespace. Added in Consul 1.7.0.
+- `ns` `(string: "")` <EnterpriseAlert inline /> - Specifies the namespace to lookup the token within.
+  The namespace can also be specified [through other methods](#methods-to-specify-namespace).
 
 - `expanded` `(bool: false)` - If this field is set, the contents of all policies and
   roles affecting the token will also be returned.
@@ -390,7 +390,12 @@ The table below shows this endpoint's support for
 
 The corresponding CLI command is [`consul acl token update`](/commands/acl/token/update).
 
-### Parameters
+### Query Parameters
+
+- `ns` `(string: "")` <EnterpriseAlert inline /> - Specifies the namespace of the token to update.
+  The namespace can also be specified [through other methods](#methods-to-specify-namespace).
+
+### JSON Request Body Schema
 
 - `AccessorID` `(string: "")` - Specifies the accessor ID of the token being updated. This is
   required in the URL path but may also be specified in the JSON body. If specified
@@ -458,10 +463,8 @@ The corresponding CLI command is [`consul acl token update`](/commands/acl/token
   Consul.
 
 - `Namespace` `(string: "")` <EnterpriseAlert inline /> - Specifies the namespace of
-  the token to update. If not provided in the JSON body, the value of
-  the `ns` URL query parameter or in the `X-Consul-Namespace` header will be used.
-  If not provided, the namespace will be inherited from the request's ACL
-  token or will default to the `default` namespace. Added in Consul 1.7.0.
+  the token to update. This takes precedence over the `ns` query parameter,
+  one of several [other methods to specify the namespace](#methods-to-specify-namespace).
 
 ### Sample Payload
 
@@ -540,18 +543,22 @@ The table below shows this endpoint's support for
 
 The corresponding CLI command is [`consul acl token clone`](/commands/acl/token/clone).
 
-### Parameters
+### Path Parameters
 
-- `AccessorID` `(string: <required>)` - The accessor ID of the token to clone. This is required
-  in the URL path
+- `AccessorID` `(string: <required>)` - The accessor ID of the token to clone.
+
+### Query Parameters
+
+- `ns` `(string: "")` <EnterpriseAlert inline /> - Specifies the namespace of the token to be cloned.
+  The namespace can also be specified [through other methods](#methods-to-specify-namespace).
+
+### JSON Request Body Schema
 
 - `Description` `(string: "")` - Free form human readable description for the cloned token.
 
 - `Namespace` `(string: "")` <EnterpriseAlert inline /> - Specifies the namespace of
-  the token to be cloned. If not provided in the JSON body, the value of
-  the `ns` URL query parameter or in the `X-Consul-Namespace` header will be used.
-  If not provided, the namespace will be inherited from the request's ACL
-  token or will default to the `default` namespace. Added in Consul 1.7.0.
+  the token to be cloned. This takes precedence over the `ns` query parameter,
+  one of several [other methods to specify the namespace](#methods-to-specify-namespace).
 
 ### Sample Payload
 
@@ -621,16 +628,14 @@ The table below shows this endpoint's support for
 
 The corresponding CLI command is [`consul acl token delete`](/commands/acl/token/delete).
 
-### Parameters
+### Path Parameters
 
-- `AccessorID` `(string: <required>)` - Specifies the accessor ID of the ACL token to
-  delete. This is required and is specified as part of the URL path.
+- `AccessorID` `(string: <required>)` - Specifies the accessor ID of the ACL token to delete.
 
-- `ns` `(string: "")` <EnterpriseAlert inline /> - Specifies the namespace of the
-  token to delete. This value can be specified as the `ns` URL query
-  parameter or the `X-Consul-Namespace` header. If not provided by either,
-  the namespace will be inherited from the request's ACL token or will default
-  to the `default` namespace. Added in Consul 1.7.0.
+### Query Parameters
+
+- `ns` `(string: "")` <EnterpriseAlert inline /> - Specifies the namespace of the token to delete.
+  The namespace can also be specified [through other methods](#methods-to-specify-namespace).
 
 ### Sample Request
 
@@ -665,29 +670,23 @@ The table below shows this endpoint's support for
 
 The corresponding CLI command is [`consul acl token list`](/commands/acl/token/list).
 
-## Parameters
+## Query Parameters
 
 - `policy` `(string: "")` - Filters the token list to those tokens that are
-  linked with the specific policy ID.
+  linked with this specific policy ID.
 
 - `role` `(string: "")` - Filters the token list to those tokens that are
-  linked with the specific role ID.
+  linked with this specific role ID.
 
 - `authmethod` `(string: "")` - Filters the token list to those tokens that are
-  linked with the specific named auth method.
+  linked with this specific named auth method.
 
-- `authmethod-ns` `(string: "")` <EnterpriseAlert inline /> - Specifics the namespace
-  of the `authmethod` being used for token lookup. If not provided, the namespace
-  provided by the `ns` parameter will be used. If neither of those is provided
-  then the namespace will be inherited from the request's ACL token. Added in
-  Consul 1.7.0.
+- `authmethod-ns` `(string: "")` <EnterpriseAlert inline /> - Specifies the namespace of the
+  `authmethod` being used for token lookup. If not provided, the namespace
+  provided by the `ns` parameter or [through other methods](#methods-to-specify-namespace) will be used.
 
-- `ns` `(string: "")` <EnterpriseAlert inline /> - Specifies the namespace to list
-  the tokens for. This value can be specified as the `ns` URL query
-  parameter or the `X-Consul-Namespace` header. If not provided by either,
-  the namespace will be inherited from the request's ACL token or will default
-  to the `default` namespace. The namespace may be specified as '\*' and then
-  results will be returned for all namespaces. Added in Consul 1.7.0.
+- `ns` `(string: "")` <EnterpriseAlert inline /> - Specifies the namespace to list the tokens for.
+  The namespace can also be specified [through other methods](#methods-to-specify-namespace).
 
 ## Sample Request
 
@@ -754,3 +753,15 @@ for reading other secrets which given even more permissions.
   }
 ]
 ```
+
+## Methods to Specify Namespace <EnterpriseAlert inline />
+
+ACL token endpoints
+support several methods for specifying the namespace of the ACL token resource(s)
+with the following order of precedence:
+- `Namespace` field of the JSON request body -
+  only applies to [create](#create-a-token) and [update](#update-a-token) endpoints
+- `ns` query parameter
+- `X-Consul-Namespace` request header
+- Namespace is inherited from the namespace of the request's ACL token (if any)
+- The `default` namespace
